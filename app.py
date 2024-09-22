@@ -8,7 +8,7 @@ st.header("Chat with the Streamlit docs 💬 📚")
 
 if "messages" not in st.session_state.keys(): # Initialize the chat message history
     st.session_state.messages = [
-        {"role": "assistant", "content": "Ask me a question about Streamlit's open-source Python library!"}
+        {"role": "assistant", "content": "Ask me a question about any ARIBA query you have!"}
     ]
 @st.cache_resource(show_spinner=False)
 def load_data():
