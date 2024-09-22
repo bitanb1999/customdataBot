@@ -4,7 +4,7 @@ from llama_index.llms.openai import OpenAI
 import openai
 from llama_index.core import SimpleDirectoryReader
 openai.api_key = st.secrets.openai_key
-st.header("Chat with the Streamlit docs 💬 📚")
+st.header("Chat with the ARIBA Bot  💬 📚")
 
 if "messages" not in st.session_state.keys(): # Initialize the chat message history
     st.session_state.messages = [
