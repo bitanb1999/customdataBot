@@ -19,8 +19,6 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# If you have git repo, you can clone your code that lives in a remote repo to WORKDIR
- RUN git clone https://github.com/bitanb1999/customdataBot .
 
 # Step 6: Set working directory to previously added app directory
 WORKDIR /app
