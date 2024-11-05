@@ -67,7 +67,7 @@ for message in st.session_state.messages: # Display the prior chat messages
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            if "PNR Status" in prompt:  # Check if the prompt contains 'PNR Status'
+            if "pnr" or "status" in prompt.lower:  # Check if the prompt contains 'PNR Status'
                 response_text = "Please refer to the ARIBA Portal directly for such inquiries."
             else:
                 response = chat_engine.chat(prompt)
