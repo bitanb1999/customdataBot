@@ -3,6 +3,38 @@ from llama_index.core import VectorStoreIndex, Settings, Document
 from llama_index.llms.openai import OpenAI
 import openai
 from llama_index.core import SimpleDirectoryReader
+# Apply custom CSS for white background and blue text color
+st.markdown(
+    """
+    <style>
+    /* Set the background color to white for the entire app */
+    .stApp {
+        background-color: white;
+        color: #0070c0; /* SAP-like blue color for text */
+    }
+
+    /* Customize chat message bubbles */
+    .st-chat-message {
+        background-color: #e6f2ff; /* Light blue background for messages */
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px 0;
+        font-size: 16px;
+    }
+
+    /* Styling assistant responses */
+    .st-chat-message.assistant {
+        color: #005aa7; /* Slightly darker blue for assistant text */
+    }
+
+    /* Styling user input */
+    .st-chat-message.user {
+        color: #003366; /* Darker blue for user text */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 openai.api_key = st.secrets.openai_key
 st.header("Chat with the ARIBA Bot 💬📚")
