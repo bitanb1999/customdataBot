@@ -10,12 +10,12 @@ st.markdown(
     /* Set the background color to white for the entire app */
     .stApp {
         background-color: grey;
-        color: ##0066b2; /* SAP-like blue color for text */
+        color: #0066b2; /* SAP-like blue color for text */
     }
 
     /* Customize chat message bubbles */
     .st-chat-message {
-        background-color: ##B9D9EB; /* Light blue background for messages */
+        background-color: #B9D9EB; /* Light blue background for messages */
         border-radius: 10px;
         padding: 10px;
         margin: 5px 0;
@@ -24,12 +24,12 @@ st.markdown(
 
     /* Styling assistant responses */
     .st-chat-message.assistant {
-        color: ##1F305E; /* Slightly darker blue for assistant text */
+        color: #1F305E; /* Slightly darker blue for assistant text */
     }
 
     /* Styling user input */
     .st-chat-message.user {
-        color: ##041E42; /* Darker blue for user text */
+        color: #041E42; /* Darker blue for user text */
     }
     </style>
     """,
