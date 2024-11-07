@@ -1,14 +1,19 @@
 import streamlit as st
 import requests
-import pandas
+import pandas as pd
 import re
 from llama_index.core import VectorStoreIndex, Settings, Document
 from llama_index.llms.openai import OpenAI
 import openai
 from llama_index.core import SimpleDirectoryReader
+from difflib import SequenceMatcher
 
-
+df = pd.read_csv("./data/promptdata.csv")
+df["Prompt"]=df["Prompt"].apply(lambda x:x.replace("\n"," "))
+df["Prompt"]=df["Prompt"].apply(lambda x:x.strip())
+df["Prompt"]=df["Prompt"].apply(lambda x:x.lower())
 openai.api_key = st.secrets.openai_key
+st.header("Chat with the ARIBA Bot 💬📚")
 
 if "messages" not in st.session_state.keys(): # Initialize the chat message history
     st.session_state.messages = [
@@ -29,6 +34,33 @@ def extract_number_before_hash(text):
   if match:
     return str(match.group(1))
   return None
+def find_similar_prompt(user_input, df, prompt_column='Prompt', threshold=0.5):
+  """Finds the most similar prompt in a DataFrame to the user input.
+
+  Args:
+    user_input: The user's input string.
+    df: The pandas DataFrame containing the prompts.
+    prompt_column: The name of the column containing the prompts.
+    threshold: The minimum similarity score required for a match.
+
+  Returns:
+    The corresponding text from the DataFrame if a match is found,
+    or None if no match is found.
+  """
+  max_similarity = 0
+  most_similar_prompt = None
+
+  for prompt in df[prompt_column]:
+    similarity = SequenceMatcher(None, user_input, prompt).ratio()
+    if similarity >= threshold and similarity > max_similarity:
+      max_similarity = similarity
+      most_similar_prompt = prompt
+
+  if most_similar_prompt:
+    corresponding_text = df.loc[df[prompt_column] == most_similar_prompt, 'text'].iloc[0]  # Replace 'corresponding_column' with the actual column name
+    return corresponding_text
+  else:
+    return None
 
 index = load_data()
 chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
@@ -51,7 +83,8 @@ if st.session_state.messages[-1]["role"] != "assistant":
                 url = "https://jsonplaceholder.typicode.com/posts/"+pnr_number
                 response = requests.get(url).json()["title"]
                 response_text = response
-            
+            elif find_similar_prompt(prompt.lower(), df)!= None:
+               response_text= find_similar_prompt(prompt.lower(), df)
             else:
                 response = chat_engine.chat(prompt)
                 response_text = response.response
