@@ -1,43 +1,14 @@
 import streamlit as st
+import requests
+import pandas
+import re
 from llama_index.core import VectorStoreIndex, Settings, Document
 from llama_index.llms.openai import OpenAI
 import openai
 from llama_index.core import SimpleDirectoryReader
-# Apply custom CSS for white background and blue text color
-st.markdown(
-    """
-    <style>
-    /* Set the background color to white for the entire app */
-    .stApp {
-        background-color: grey;
-        color: #0066b2; /* SAP-like blue color for text */
-    }
 
-    /* Customize chat message bubbles */
-    .st-chat-message {
-        background-color: #B9D9EB; /* Light blue background for messages */
-        border-radius: 10px;
-        padding: 10px;
-        margin: 5px 0;
-        font-size: 16px;
-    }
-
-    /* Styling assistant responses */
-    .st-chat-message.assistant {
-        color: #1F305E; /* Slightly darker blue for assistant text */
-    }
-
-    /* Styling user input */
-    .st-chat-message.user {
-        color: #041E42; /* Darker blue for user text */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 openai.api_key = st.secrets.openai_key
-st.header("Chat with the ARIBA Bot 💬📚")
 
 if "messages" not in st.session_state.keys(): # Initialize the chat message history
     st.session_state.messages = [
@@ -53,6 +24,12 @@ def load_data():
         index = VectorStoreIndex.from_documents(docs)
         return index
 
+def extract_number_before_hash(text):
+  match = re.search(r"(\d+)\s?#", text)
+  if match:
+    return str(match.group(1))
+  return None
+
 index = load_data()
 chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
 
@@ -67,8 +44,14 @@ for message in st.session_state.messages: # Display the prior chat messages
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            if "PNR Status" in prompt:  # Check if the prompt contains 'PNR Status'
-                response_text = "Please refer to the ARIBA Portal directly for such inquiries."
+            if "pnr" in prompt.lower():  # Check if the prompt contains 'PNR Status'
+                response_text = "Please enter your PNR number followed by #"
+            elif "#" in prompt.lower():
+                pnr_number = extract_number_before_hash(prompt.lower())
+                url = "https://jsonplaceholder.typicode.com/posts/"+pnr_number
+                response = requests.get(url).json()["title"]
+                response_text = response
+            
             else:
                 response = chat_engine.chat(prompt)
                 response_text = response.response
